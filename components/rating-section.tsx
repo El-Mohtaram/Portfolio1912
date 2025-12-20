@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useState, useEffect, useRef } from "react"
+import { motion } from "framer-motion"
 import { Star } from "lucide-react"
 
 export function RatingSection() {
@@ -61,28 +62,35 @@ export function RatingSection() {
                 <p className="mt-2 font-sans text-lg text-white/70">could you please rate it for me?</p>
             </div>
 
-            {/* Star Rating */}
+            {/* Star Rating with Breathe Effect */}
             <div className="flex gap-2">
-                {[1, 2, 3, 4, 5].map((star) => (
-                    <button
+                {[1, 2, 3, 4, 5].map((star, index) => (
+                    <motion.button
                         key={star}
                         onClick={() => handleRatingClick(star)}
                         onMouseEnter={() => setHoveredRating(star)}
                         onMouseLeave={() => setHoveredRating(0)}
-                        // REMOVED: focus:ring-2 focus:ring-yellow-400 ...
-                        // ADDED: focus:outline-none (removes default ring)
                         className="force-arrow transition-transform duration-150 hover:scale-110 focus:outline-none rounded-full"
                         aria-label={`Rate ${star} stars`}
+                        // Breathe animation - subtle shimmer effect
+                        animate={{
+                            opacity: [0.7, 1, 0.7],
+                            scale: [1, 1.05, 1],
+                        }}
+                        transition={{
+                            duration: 3,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                            delay: index * 0.2,
+                        }}
                     >
                         <Star
-                            // ADDED: animate-pulse on active stars for a breathing glow effect
-                            className={`h-10 w-10 transition-all duration-150 ${
-                                star <= (hoveredRating || rating)
-                                    ? "fill-yellow-400 text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.9)]"
-                                    : "fill-slate-600 text-slate-600"
-                            }`}
+                            className={`h-10 w-10 transition-all duration-150 ${star <= (hoveredRating || rating)
+                                ? "fill-yellow-400 text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.9)]"
+                                : "fill-slate-600 text-slate-600"
+                                }`}
                         />
-                    </button>
+                    </motion.button>
                 ))}
             </div>
 
@@ -91,7 +99,7 @@ export function RatingSection() {
                 <form
                     onSubmit={handleSubmit}
                     className={`
-            w-full max-w-md space-y-4 rounded-2xl border border-white/10 bg-black/40 p-6 backdrop-blur-xl
+            w-full max-w-md space-y-4 rounded-2xl border border-white/10 bg-[#030305]/80 p-6 backdrop-blur-xl
             transition-all duration-500
             ${showForm ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"}
           `}

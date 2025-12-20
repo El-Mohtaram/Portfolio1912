@@ -62,7 +62,7 @@ export function IntegratedHeroGrid({
         entries.forEach((entry) => {
           const video = entry.target as HTMLVideoElement
           if (entry.isIntersecting) {
-            video.play().catch(() => {})
+            video.play().catch(() => { })
           } else {
             video.pause()
           }
@@ -207,15 +207,26 @@ export function IntegratedHeroGrid({
 
     if (media.type === "video") {
       return (
-        <video
-          src={media.src}
-          poster={media.poster}
-          className={`h-full w-full object-cover ${className}`}
-          autoPlay
-          loop
-          muted
-          playsInline
-        />
+        <div className="relative h-full w-full">
+          {/* Anti-IDM Shield - blocks hover detection on video */}
+          <div
+            className="absolute inset-0 z-10 bg-transparent"
+            onContextMenu={(e) => e.preventDefault()}
+          />
+          <video
+            src={media.src}
+            poster={media.poster}
+            className={`h-full w-full object-cover ${className}`}
+            autoPlay
+            loop
+            muted
+            playsInline
+            controlsList="nodownload"
+            disablePictureInPicture
+            draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
+          />
+        </div>
       )
     }
 
@@ -275,8 +286,8 @@ export function IntegratedHeroGrid({
 
       <div className="film-grain" style={{ zIndex: 5 }} />
 
-      {/* Hero Section */}
-      <section className="relative min-h-screen py-20 pt-32 md:py-32 md:pt-40">
+      {/* Hero Section - Small padding for touch devices (bottom nav), large only for Desktop + Mouse */}
+      <section className="relative min-h-screen py-8 pt-12 md:py-16 md:pt-16 lg:pt-16 lg:[@media(pointer:fine)]:pt-40 lg:[@media(pointer:fine)]:py-32">
         <div className="relative mx-auto max-w-[95%] px-4 md:px-6 2xl:max-w-[1800px]">
           <div className="pointer-events-none absolute inset-0 overflow-hidden">
             <div className="ethereal-ribbon-1" style={{ top: "20%", left: "-10%" }} />
@@ -300,7 +311,7 @@ export function IntegratedHeroGrid({
                     }}
                   />
                   {/* Mobile: h-24 w-24 | Desktop: md:h-32 md:w-32 */}
-<div className="relative h-24 w-24 overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl md:h-32 md:w-32 [mask-image:linear-gradient(to_bottom,black_80%,transparent_100%)]">
+                  <div className="relative h-24 w-24 overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl md:h-32 md:w-32 [mask-image:linear-gradient(to_bottom,black_80%,transparent_100%)]">
                     <Image
                       src={photoSrc || "/placeholder.svg?height=160&width=160"}
                       alt={name}
@@ -312,21 +323,21 @@ export function IntegratedHeroGrid({
                 </div>
 
                 <div className="flex flex-col items-center lg:items-start">
-  {/* Name: Bigger & Bold */}
-  <h1 className="font-serif text-4xl font-bold text-white md:text-6xl whitespace-nowrap">
-    {name}
-  </h1>
-  
-  {/* Title: Increased Weight & White Color */}
-  <p className="mt-2 font-sans text-xl font-medium text-white md:text-2xl">
-    {title}
-  </p>
-  
-  {/* Value Prop: Added below title */}
-  <p className="mt-1 font-sans text-sm text-white/60 md:text-base">
-    Helping brands stand out with elegant visuals & motion.
-  </p>
-</div>
+                  {/* Name: Bigger & Bold */}
+                  <h1 className="font-serif text-4xl font-bold text-white md:text-6xl whitespace-nowrap">
+                    {name}
+                  </h1>
+
+                  {/* Title: Increased Weight & White Color */}
+                  <p className="mt-2 font-sans text-xl font-medium text-white md:text-2xl">
+                    {title}
+                  </p>
+
+                  {/* Value Prop: Added below title */}
+                  <p className="mt-1 font-sans text-sm text-white/60 md:text-base">
+                    Helping brands stand out with elegant visuals & motion.
+                  </p>
+                </div>
               </div>
 
               {!isTouchDevice && brandLogos.length > 0 && (
@@ -379,19 +390,30 @@ export function IntegratedHeroGrid({
 
                           <div className="relative h-full w-full overflow-hidden">
                             {project.thumbnail?.type === "video" ? (
-                              <video
-                                ref={(el) => {
-                                  if (el) videoRefs.current.set(project.id, el)
-                                }}
-                                src={project.thumbnail?.src || ""}
-                                poster={project.thumbnail?.poster}
-                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                autoPlay
-                                loop
-                                muted
-                                playsInline
-                                onLoadedData={() => handleImageLoad(project.id)}
-                              />
+                              <>
+                                {/* Anti-IDM Shield - blocks hover detection on video */}
+                                <div
+                                  className="absolute inset-0 z-10 bg-transparent"
+                                  onContextMenu={(e) => e.preventDefault()}
+                                />
+                                <video
+                                  ref={(el) => {
+                                    if (el) videoRefs.current.set(project.id, el)
+                                  }}
+                                  src={project.thumbnail?.src || ""}
+                                  poster={project.thumbnail?.poster}
+                                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                  autoPlay
+                                  loop
+                                  muted
+                                  playsInline
+                                  controlsList="nodownload"
+                                  disablePictureInPicture
+                                  draggable={false}
+                                  onContextMenu={(e) => e.preventDefault()}
+                                  onLoadedData={() => handleImageLoad(project.id)}
+                                />
+                              </>
                             ) : (
                               <Image
                                 src={project.thumbnail?.src || "/placeholder.svg"}
@@ -405,9 +427,8 @@ export function IntegratedHeroGrid({
                           </div>
 
                           <div
-                            className={`absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-6 transition-all duration-500 ${
-                              isTouchDevice ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-                            }`}
+                            className={`absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-6 transition-all duration-500 ${isTouchDevice ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                              }`}
                           >
                             <h3 className="font-serif text-xl font-bold text-white">{project.title}</h3>
                           </div>
@@ -557,9 +578,8 @@ export function IntegratedHeroGrid({
                         <button
                           key={idx}
                           onClick={() => setCurrentGalleryIndex(idx)}
-                          className={`force-arrow h-2 w-2 rounded-full transition-all ${
-                            idx === currentGalleryIndex ? "bg-white scale-125" : "bg-white/40"
-                          }`}
+                          className={`force-arrow h-2 w-2 rounded-full transition-all ${idx === currentGalleryIndex ? "bg-white scale-125" : "bg-white/40"
+                            }`}
                         />
                       ))}
                     </div>

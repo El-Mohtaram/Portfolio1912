@@ -92,11 +92,10 @@ export default function ShopPage() {
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`force-arrow rounded-full border px-8 py-3 font-sans text-sm font-medium transition-all duration-300 ${
-                selectedCategory === cat.id
-                  ? "border-white/50 bg-white/20 text-white shadow-lg shadow-blue-500/20"
-                  : "border-white/20 bg-white/5 text-white/70 hover:border-white/40 hover:bg-white/10 hover:text-white"
-              } backdrop-blur-xl`}
+              className={`force-arrow rounded-full border px-8 py-3 font-sans text-sm font-medium transition-all duration-300 ${selectedCategory === cat.id
+                ? "border-white/50 bg-white/20 text-white shadow-lg shadow-cyan-500/20"
+                : "border-white/20 bg-white/5 text-white/70 hover:border-white/40 hover:bg-white/10 hover:text-white"
+                } backdrop-blur-xl`}
             >
               {cat.name}
             </button>
@@ -163,7 +162,7 @@ export default function ShopPage() {
                 <Lock className="h-16 w-16 text-white/40" />
               </div>
               <div
-                className="absolute inset-0 rounded-3xl bg-gradient-to-br from-blue-500/20 to-purple-500/20"
+                className="absolute inset-0 rounded-3xl bg-gradient-to-br from-cyan-500/20 to-pink-500/20"
                 style={{ animation: "pulse 2s ease-in-out infinite" }}
               />
             </div>

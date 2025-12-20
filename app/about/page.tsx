@@ -183,7 +183,7 @@ export default function AboutPage() {
             {brands.map((brand, index) => (
               <TiltCard key={brand.name}>
                 <div
-                  className="group relative h-24 w-24 overflow-hidden rounded-2xl border border-white/20 bg-white/5 backdrop-blur-xl transition-all duration-500 hover:scale-110 hover:border-white/40 hover:bg-white/10 hover:shadow-2xl hover:shadow-blue-500/20 md:h-28 md:w-28"
+                  className="group relative h-24 w-24 overflow-hidden rounded-2xl border border-white/20 bg-white/5 backdrop-blur-xl transition-all duration-500 hover:scale-110 hover:border-white/40 hover:bg-white/10 hover:shadow-2xl hover:shadow-cyan-500/20 md:h-28 md:w-28"
                   style={{ animation: `scaleIn 600ms ease-out ${1050 + index * 100}ms backwards` }}
                 >
                   <Image
@@ -284,7 +284,7 @@ export default function AboutPage() {
                   key={platform.name}
                   href={platform.href}
                   aria-label={platform.name}
-                  className="group flex h-14 w-14 items-center justify-center rounded-full border border-white/20 bg-white/5 backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:border-white/40 hover:bg-white/10 hover:shadow-lg hover:shadow-blue-500/20"
+                  className="group flex h-14 w-14 items-center justify-center rounded-full border border-white/20 bg-white/5 backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:border-white/40 hover:bg-white/10 hover:shadow-lg hover:shadow-cyan-500/20"
                 >
                   <Icon className="h-6 w-6 text-white transition-transform duration-300 group-hover:scale-110" />
                 </a>

@@ -18,7 +18,7 @@ export function HomeCta() {
 
         {/* Content */}
         <div className="relative z-10 flex flex-col items-center text-center">
-          <h2 className="font-playfair text-3xl font-medium tracking-tight text-white md:text-4xl lg:text-5xl">
+          <h2 className="font-serif text-3xl font-medium tracking-tight text-white md:text-4xl lg:text-5xl">
             Ready to create something extraordinary?
           </h2>
 

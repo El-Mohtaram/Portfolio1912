@@ -104,7 +104,7 @@ export default async function ShopItemPage({ params }: { params: Promise<{ id: s
 
             <div className="flex items-center gap-6">
               <span className="font-serif text-4xl font-bold text-white">${item.price}</span>
-              <button className="flex items-center gap-3 rounded-full border border-white/30 bg-white/10 px-8 py-4 font-sans text-base font-medium text-white backdrop-blur-xl transition-all hover:scale-105 hover:border-white/50 hover:bg-white/20 hover:shadow-2xl hover:shadow-blue-500/30">
+              <button className="flex items-center gap-3 rounded-full border border-white/30 bg-white/10 px-8 py-4 font-sans text-base font-medium text-white backdrop-blur-xl transition-all hover:scale-105 hover:border-white/50 hover:bg-white/20 hover:shadow-2xl hover:shadow-cyan-500/30">
                 <ShoppingCart className="h-5 w-5" />
                 Buy Now
               </button>

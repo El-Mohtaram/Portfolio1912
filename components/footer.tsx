@@ -46,10 +46,10 @@ export function Footer() {
 
   return (
     <footer
+      id="site-footer"
       ref={footerRef}
-      className={`relative z-10 mt-32 border-t border-white/10 bg-gradient-to-b from-transparent to-black/40 py-16 transition-all duration-1000 ${
-        isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
-      }`}
+      className={`relative z-10 mt-32 border-t border-white/10 bg-gradient-to-b from-transparent to-black/40 py-16 transition-all duration-1000 ${isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
+        }`}
     >
       <div className="mx-auto max-w-7xl px-6">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
@@ -69,9 +69,12 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Center: Logo/Initials */}
+          {/* Center: Logo/Initials with Levitation Effect */}
           <div className="flex flex-col items-center justify-center">
-            <Link href="/" className="mb-6 text-center transition-transform hover:scale-105">
+            <Link
+              href="/"
+              className="mb-6 text-center transition-all duration-500 hover:-translate-y-2 hover:scale-105 hover:drop-shadow-[0_10px_20px_rgba(0,255,255,0.25)]"
+            >
               <h3 className="font-serif text-4xl font-bold text-white">MH</h3>
               <p className="mt-2 font-sans text-sm text-white/60">Multimedia Designer</p>
             </Link>
@@ -109,7 +112,7 @@ export function Footer() {
                 key={label}
                 href={href}
                 aria-label={label}
-                className="group relative rounded-full border border-white/20 bg-white/5 p-2 backdrop-blur-sm transition-all hover:scale-110 hover:border-white/40 hover:bg-white/10 hover:shadow-lg hover:shadow-blue-500/20"
+                className="group relative rounded-full border border-white/20 bg-white/5 p-2 backdrop-blur-sm transition-all hover:scale-110 hover:border-white/40 hover:bg-white/10 hover:shadow-lg hover:shadow-cyan-500/20"
               >
                 {isReactIcon ? (
                   <Icon className="h-4 w-4 text-white/60 transition-colors group-hover:text-white" />

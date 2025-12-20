@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react"
 import { motion, useMotionValue, useSpring } from "framer-motion"
+import { CanvasVideo } from "./ui/canvas-video"
 
 // --- 🛠️ CALIBRATION ZONE 🛠️ ---
 const ARROW_X = 13
@@ -18,20 +19,12 @@ const TEXT_X = 32
 const TEXT_Y = 32
 const TEXT_SIZE = "64px"
 const TEXT_SPEED = 1.5
-
-// Speed control constant
-const VIDEO_SPEED = 1.5
 // --------------------------------------
 
 export function CustomCursor() {
     const [isVisible, setIsVisible] = useState(false)
-
     const [isHovering, setIsHovering] = useState(false)
     const [isText, setIsText] = useState(false)
-
-    const [arrowBlob, setArrowBlob] = useState<string>("")
-    const [handBlob, setHandBlob] = useState<string>("")
-    const [selectBlob, setSelectBlob] = useState<string>("")
 
     const isHoveringRef = useRef(false)
     const isTextRef = useRef(false)
@@ -42,30 +35,6 @@ export function CustomCursor() {
     const springConfig = { damping: 30, stiffness: 350, mass: 0.6 }
     const smoothX = useSpring(mouseX, springConfig)
     const smoothY = useSpring(mouseY, springConfig)
-
-    // 1. Load Videos
-    useEffect(() => {
-        const fetchVideo = async (path: string, setter: (url: string) => void) => {
-            try {
-                const response = await fetch(path)
-                const blob = await response.blob()
-                const objectUrl = URL.createObjectURL(blob)
-                setter(objectUrl)
-            } catch (e) {
-                console.error("Failed to load cursor video", e)
-            }
-        }
-
-        fetchVideo("/cursor-loop.webm", setArrowBlob)
-        fetchVideo("/cursor-hand.webm", setHandBlob)
-        fetchVideo("/cursor-select.webm", setSelectBlob)
-
-        return () => {
-            if (arrowBlob) URL.revokeObjectURL(arrowBlob)
-            if (handBlob) URL.revokeObjectURL(handBlob)
-            if (selectBlob) URL.revokeObjectURL(selectBlob)
-        }
-    }, [])
 
     useEffect(() => {
         isHoveringRef.current = isHovering
@@ -139,7 +108,6 @@ export function CustomCursor() {
             setIsHovering(foundPointer && !shouldBlockHand && !foundText)
         }
 
-        // --- NEW: VISIBILITY HANDLERS ---
         const handleMouseLeave = () => {
             setIsVisible(false)
         }
@@ -149,7 +117,6 @@ export function CustomCursor() {
 
         window.addEventListener("mousemove", moveCursor)
         window.addEventListener("mouseover", handleMouseOver)
-        // Add listeners for leaving/entering the window
         document.addEventListener("mouseleave", handleMouseLeave)
         document.addEventListener("mouseenter", handleMouseEnter)
 
@@ -161,11 +128,10 @@ export function CustomCursor() {
         }
     }, [mouseX, mouseY, isVisible])
 
+    // Don't render on touch devices
     if (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches) {
         return null
     }
-
-    if (!arrowBlob || !handBlob) return null
 
     return (
         <motion.div
@@ -173,11 +139,11 @@ export function CustomCursor() {
             style={{
                 x: smoothX,
                 y: smoothY,
-                opacity: isVisible ? 1 : 0, // This now responds to mouse leave
+                opacity: isVisible ? 1 : 0,
                 filter: "grayscale(100%) brightness(140%) drop-shadow(0px 4px 10px rgba(0,0,0,0.3))"
             }}
         >
-            {/* TEXT CURSOR */}
+            {/* TEXT CURSOR - Canvas rendered (invisible to IDM) */}
             <motion.div
                 className="absolute inset-0"
                 animate={{
@@ -187,25 +153,14 @@ export function CustomCursor() {
                 transition={{ duration: 0.2 }}
                 style={{ width: TEXT_SIZE, height: TEXT_SIZE }}
             >
-                <div className="relative w-full h-full">
-                    {selectBlob && (
-                        <video
-                            ref={video => { if (video) video.playbackRate = TEXT_SPEED }}
-                            src={selectBlob}
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                            disablePictureInPicture
-                            controls={false}
-                            controlsList="nodownload"
-                            className="IDM_hidden w-full h-full object-contain bg-transparent"
-                        />
-                    )}
-                </div>
+                <CanvasVideo
+                    src="/cursor-select.webm"
+                    className="w-full h-full"
+                    playbackRate={TEXT_SPEED}
+                />
             </motion.div>
 
-            {/* HAND CURSOR */}
+            {/* HAND CURSOR - Canvas rendered (invisible to IDM) */}
             <motion.div
                 className="absolute inset-0"
                 animate={{
@@ -215,25 +170,14 @@ export function CustomCursor() {
                 transition={{ duration: 0.2 }}
                 style={{ width: HAND_SIZE, height: HAND_SIZE }}
             >
-                <div className="relative w-full h-full">
-                    {handBlob && (
-                        <video
-                            ref={video => { if (video) video.playbackRate = HAND_SPEED }}
-                            src={handBlob}
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                            disablePictureInPicture
-                            controls={false}
-                            controlsList="nodownload"
-                            className="IDM_hidden w-full h-full object-contain bg-transparent"
-                        />
-                    )}
-                </div>
+                <CanvasVideo
+                    src="/cursor-hand.webm"
+                    className="w-full h-full"
+                    playbackRate={HAND_SPEED}
+                />
             </motion.div>
 
-            {/* ARROW CURSOR */}
+            {/* ARROW CURSOR - Canvas rendered (invisible to IDM) */}
             <motion.div
                 className="absolute inset-0"
                 animate={{
@@ -243,22 +187,11 @@ export function CustomCursor() {
                 transition={{ duration: 0.2 }}
                 style={{ width: ARROW_SIZE, height: ARROW_SIZE }}
             >
-                <div className="relative w-full h-full">
-                    {arrowBlob && (
-                        <video
-                            ref={video => { if (video) video.playbackRate = ARROW_SPEED }}
-                            src={arrowBlob}
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                            disablePictureInPicture
-                            controls={false}
-                            controlsList="nodownload"
-                            className="IDM_hidden w-full h-full object-contain bg-transparent"
-                        />
-                    )}
-                </div>
+                <CanvasVideo
+                    src="/cursor-loop.webm"
+                    className="w-full h-full"
+                    playbackRate={ARROW_SPEED}
+                />
             </motion.div>
 
         </motion.div>

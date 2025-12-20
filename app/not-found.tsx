@@ -50,7 +50,7 @@ export default function NotFound() {
 
       <Link
         href="/"
-        className="group flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-8 py-4 font-sans text-sm font-medium text-white backdrop-blur-xl transition-all duration-500 hover:scale-105 hover:border-white/50 hover:bg-white/20 hover:shadow-2xl hover:shadow-blue-500/30"
+        className="group flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-8 py-4 font-sans text-sm font-medium text-white backdrop-blur-xl transition-all duration-500 hover:scale-105 hover:border-white/50 hover:bg-white/20 hover:shadow-2xl hover:shadow-cyan-500/30"
         style={{ animation: "fadeInUp 800ms ease-out 400ms backwards" }}
       >
         Return to Surface
