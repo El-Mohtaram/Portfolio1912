@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef } from "react"
 import { motion, useMotionValue, useSpring } from "framer-motion"
-import { CanvasVideo } from "./ui/canvas-video"
 
 // --- 🛠️ CALIBRATION ZONE 🛠️ ---
 const ARROW_X = 13
@@ -20,6 +19,93 @@ const TEXT_Y = 32
 const TEXT_SIZE = "64px"
 const TEXT_SPEED = 1.5
 // --------------------------------------
+
+/**
+ * ShadowCursorVideo
+ * Renders the video inside a "Closed Shadow DOM".
+ * This prevents extensions (like IDM) from detecting the <video> tag in the DOM
+ * and injecting their buttons over it.
+ */
+const ShadowCursorVideo = ({ src, speed }: { src: string, speed: number }) => {
+    const hostRef = useRef<HTMLDivElement>(null)
+    const videoRef = useRef<HTMLVideoElement | null>(null)
+    const isInitialized = useRef(false)
+
+    // 1. Setup Shadow DOM & Video Element (Run Once)
+    useEffect(() => {
+        if (!hostRef.current || isInitialized.current) return
+
+        try {
+            // Create a CLOSED shadow root - invisible to external scripts
+            const shadow = hostRef.current.attachShadow({ mode: "closed" })
+            isInitialized.current = true
+
+            // Create video element manually
+            const video = document.createElement("video")
+
+            // CSS to force high quality and fill container
+            video.style.width = "100%"
+            video.style.height = "100%"
+            video.style.objectFit = "contain"
+            video.style.pointerEvents = "none" // Extra safety
+            video.style.display = "block"
+
+            // Attributes
+            video.autoplay = true
+            video.loop = true;
+            video.muted = true;
+            video.playsInline = true;
+
+            // Append to shadow DOM
+            shadow.appendChild(video)
+            videoRef.current = video
+
+        } catch (e) {
+            console.error("Shadow DOM attach failed", e)
+        }
+    }, [])
+
+    // 2. Handle Src (Blob) & Speed Updates
+    useEffect(() => {
+        const video = videoRef.current
+        if (!video) return
+
+        // Update Speed
+        video.playbackRate = speed
+
+        // Update Source securely via Blob
+        let active = true
+        let currentBlobUrl = ""
+
+        fetch(src)
+            .then((res) => res.blob())
+            .then((blob) => {
+                if (!active) return
+                // Revoke old URL if exists
+                if (video.src && video.src.startsWith("blob:")) {
+                    URL.revokeObjectURL(video.src)
+                }
+
+                const url = URL.createObjectURL(blob)
+                currentBlobUrl = url
+                video.src = url
+
+                // Force play after source change
+                video.play().catch(() => { /* Silent catch */ })
+            })
+            .catch(() => {
+                // Fallback to direct src if blob fails
+                if (active) video.src = src
+            })
+
+        return () => {
+            active = false
+            if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl)
+        }
+    }, [src, speed])
+
+    return <div ref={hostRef} style={{ width: "100%", height: "100%" }} />
+}
 
 export function CustomCursor() {
     const [isVisible, setIsVisible] = useState(false)
@@ -140,10 +226,10 @@ export function CustomCursor() {
                 x: smoothX,
                 y: smoothY,
                 opacity: isVisible ? 1 : 0,
-                filter: "grayscale(100%) brightness(140%) drop-shadow(0px 4px 10px rgba(0,0,0,0.3))"
+                filter: "drop-shadow(0px 4px 10px rgba(0,0,0,0.3))"
             }}
         >
-            {/* TEXT CURSOR - Canvas rendered (invisible to IDM) */}
+            {/* TEXT CURSOR */}
             <motion.div
                 className="absolute inset-0"
                 animate={{
@@ -153,14 +239,10 @@ export function CustomCursor() {
                 transition={{ duration: 0.2 }}
                 style={{ width: TEXT_SIZE, height: TEXT_SIZE }}
             >
-                <CanvasVideo
-                    src="/cursor-select.webm"
-                    className="w-full h-full"
-                    playbackRate={TEXT_SPEED}
-                />
+                <ShadowCursorVideo src="/cursor-select.webm" speed={TEXT_SPEED} />
             </motion.div>
 
-            {/* HAND CURSOR - Canvas rendered (invisible to IDM) */}
+            {/* HAND CURSOR */}
             <motion.div
                 className="absolute inset-0"
                 animate={{
@@ -170,14 +252,10 @@ export function CustomCursor() {
                 transition={{ duration: 0.2 }}
                 style={{ width: HAND_SIZE, height: HAND_SIZE }}
             >
-                <CanvasVideo
-                    src="/cursor-hand.webm"
-                    className="w-full h-full"
-                    playbackRate={HAND_SPEED}
-                />
+                <ShadowCursorVideo src="/cursor-hand.webm" speed={HAND_SPEED} />
             </motion.div>
 
-            {/* ARROW CURSOR - Canvas rendered (invisible to IDM) */}
+            {/* ARROW CURSOR */}
             <motion.div
                 className="absolute inset-0"
                 animate={{
@@ -187,11 +265,7 @@ export function CustomCursor() {
                 transition={{ duration: 0.2 }}
                 style={{ width: ARROW_SIZE, height: ARROW_SIZE }}
             >
-                <CanvasVideo
-                    src="/cursor-loop.webm"
-                    className="w-full h-full"
-                    playbackRate={ARROW_SPEED}
-                />
+                <ShadowCursorVideo src="/cursor-loop.webm" speed={ARROW_SPEED} />
             </motion.div>
 
         </motion.div>

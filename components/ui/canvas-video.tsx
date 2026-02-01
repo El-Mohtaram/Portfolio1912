@@ -18,19 +18,19 @@ interface CanvasVideoProps {
  * extensions cannot detect it. Frames are drawn to canvas in real-time.
  */
 export function CanvasVideo({
-    src,
-    className = "",
-    playbackRate = 1.0,
-    loop = true,
-    muted = true,
-    autoPlay = true,
-}: CanvasVideoProps) {
+                                src,
+                                className = "",
+                                playbackRate = 1.0,
+                                loop = true,
+                                muted = true,
+                                autoPlay = true,
+                            }: CanvasVideoProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const videoRef = useRef<HTMLVideoElement | null>(null)
     const animationRef = useRef<number>(0)
     const [isReady, setIsReady] = useState(false)
 
-    // Initialize video in memory (NOT in DOM)
+    // Initialize video in memory
     useEffect(() => {
         const video = document.createElement("video")
         video.src = src
@@ -54,7 +54,7 @@ export function CanvasVideo({
         const handleEnded = () => {
             if (loop) {
                 video.currentTime = 0
-                video.play().catch(() => { })
+                video.play().catch(() => {})
             }
         }
 
@@ -72,7 +72,7 @@ export function CanvasVideo({
         }
     }, [src, loop, muted, playbackRate, autoPlay])
 
-    // Animation loop - draw video frames to canvas
+    // Animation loop - draw video frames to canvas with DPI scaling
     useEffect(() => {
         if (!isReady) return
 
@@ -85,12 +85,24 @@ export function CanvasVideo({
 
         const draw = () => {
             const rect = canvas.getBoundingClientRect()
-            if (canvas.width !== rect.width || canvas.height !== rect.height) {
-                canvas.width = rect.width
-                canvas.height = rect.height
+
+            // 1. حساب معامل كثافة الشاشة (للشاشات الريتنا والعالية بيكون 2 أو 3)
+            // ولو مش موجود بنفترض إنه 1
+            const dpr = window.devicePixelRatio || 1;
+
+            // 2. حساب الأبعاد الفعلية بناءً على الكثافة
+            const targetWidth = Math.floor(rect.width * dpr);
+            const targetHeight = Math.floor(rect.height * dpr);
+
+            // 3. تحديث أبعاد الكانفاس الداخلية لتطابق دقة الشاشة
+            if (canvas.width !== targetWidth || canvas.height !== targetHeight) {
+                canvas.width = targetWidth;
+                canvas.height = targetHeight;
             }
 
             if (video.readyState >= 2) {
+                // 4. رسم الفيديو لملء المساحة عالية الدقة بالكامل
+                // هذا سيستفيد من جودة الفيديو الـ 600px ولن يحدث بكسلة
                 ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
             }
 
@@ -111,7 +123,7 @@ export function CanvasVideo({
             ref={canvasRef}
             className={className}
             style={{
-                imageRendering: "auto",
+                // مهم جداً: بنسيب المتصفح يحدد طريقة العرض، والكانفاس نفسه بقى عالي الدقة
                 pointerEvents: "none",
             }}
             onContextMenu={(e) => e.preventDefault()}

@@ -9,6 +9,7 @@ export interface ProjectMedia {
 
 export interface Project {
   id: string
+  slug: string
   title: string
   category: string
   description: string

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { Linkedin, Instagram, Facebook, Youtube, Mail } from "lucide-react"
 import { FaTiktok, FaBehance, FaXTwitter } from "react-icons/fa6"
+import Image from "next/image"
 
 export function Footer() {
   const [isVisible, setIsVisible] = useState(false)
@@ -69,16 +70,25 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Center: Logo/Initials with Levitation Effect */}
-          <div className="flex flex-col items-center justify-center">
-            <Link
-              href="/"
-              className="mb-6 text-center transition-all duration-500 hover:-translate-y-2 hover:scale-105 hover:drop-shadow-[0_10px_20px_rgba(0,255,255,0.25)]"
-            >
-              <h3 className="font-serif text-4xl font-bold text-white">MH</h3>
-              <p className="mt-2 font-sans text-sm text-white/60">Multimedia Designer</p>
-            </Link>
-          </div>
+            {/* Center: Logo/Initials with Levitation Effect */}
+            <div className="flex flex-col items-center justify-center">
+                <Link
+                    href="/"
+                    // 1. ضفنا flex flex-col items-center عشان يسنتر اللي جواه بالظبط
+                    // 2. ده كمان بيخلي الـ hover effects تشتغل لأن العنصر بقى Block-level
+                    className="flex flex-col items-center justify-center mb-6 text-center transition-all duration-500 hover:-translate-y-2 hover:scale-105 hover:drop-shadow-[0_10px_20px_rgba(0,255,255,0.25)]"
+                >
+                    <div className="relative mb-2 h-12 w-24 md:h-16 md:w-32">
+                        <Image
+                            src="/MHLogofooter.svg"
+                            alt="MH Logo"
+                            fill
+                            className="object-contain object-center"
+                        />
+                    </div>
+                    <p className="mt-2 font-sans text-sm text-white/60">Multimedia Designer</p>
+                </Link>
+            </div>
 
           {/* Right: Quick Links */}
           <div className="flex flex-col items-center md:items-end">

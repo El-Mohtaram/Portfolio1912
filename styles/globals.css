@@ -123,3 +123,13 @@
     @apply bg-background text-foreground;
   }
 }
+/* globals.css or similar */
+
+/* Hide motion items until Framer Motion takes control */
+.motion-hidden-until-animate {
+    visibility: hidden !important;
+}
+
+.motion-hidden-until-animate[data-animated="true"] {
+    visibility: visible !important;
+}
